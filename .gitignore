@@ -1,0 +1,30 @@
+# R
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# RStudio
+.Rproj.user/
+
+# Output folders
+outputs/
+reports/
+figures/
+
+# Processed data
+data/processed/
+
+# Large files
+*.zip
+*.7z
+
+# PDF outputs
+*.pdf
+
+# Temporary files
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
