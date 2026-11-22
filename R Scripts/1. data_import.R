@@ -10,7 +10,7 @@ list.files("../raw data")
 # 1. IMPORT AVERAGE WAGES PER EMPLOYEE
 #================================================================================================
 library(here)
-avg_wage_per_employee <- read.csv(here("raw data", "Average Wage Earnings per Employee_CLEAN.csv"))
+avg_wage_per_employee <- read.csv(here("data","raw", "Average Wage Earnings per Employee_CLEAN.csv"))
 head(avg_wage_per_employee)
 summary(avg_wage_per_employee)
 
@@ -19,7 +19,7 @@ summary(avg_wage_per_employee)
 #=================================================================================================
 library(readxl)
 library(here)
-sector_wages <- read_excel(here("raw data", "Wage Payments by Industry and Sector_CLEAN.xlsx"))
+sector_wages <- read_excel(here("data", "raw", "Wage Payments by Industry and Sector_CLEAN.xlsx"))
 head(sector_wages)
 summary(sector_wages)
 
@@ -28,16 +28,20 @@ summary(sector_wages)
 #=================================================================================================
 library(readxl)
 library(here)
-cpi <- read_excel(here("raw data", "Consumer Price Index by divison_CLEAN.xlsx"))
-head(cpi)
-summary(cpi)
+library(janitor)
+
+cpi <- read_excel(here("data","raw", "Consumer Price Index by divison_CLEAN.xlsx"))
+#head(cpi)
+#summary(cpi)
+glimpse(cpi)
+names(cpi)
 
 #=================================================================================================
 # 4. IMPORT WFP FOOD PRICES FOR 2006-2026
 #=================================================================================================
 library(readxl)
 library(here)
-food_prices <-read_excel (here("raw data","wfp_food_prices_ken_2006_2026.xlsx"))
+food_prices <-read_excel (here("data","raw","wfp_food_prices_ken_2006_2026.xlsx"))
 head(food_prices)
 summary(food_prices)
 
@@ -45,7 +49,7 @@ summary(food_prices)
 # 5. IMPORT YEAR-ON-YEAR INLFATION BY DIVISION
 #=================================================================================================
 library(here)
-yoy <- read.csv(here("raw data","Year on Year Inflation by division_CLEAN.csv"))
+yoy <- read.csv(here("data","raw","Year on Year Inflation by division_CLEAN.csv"))
 head(yoy)
 summary(yoy)
 
