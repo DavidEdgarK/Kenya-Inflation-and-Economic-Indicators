@@ -109,16 +109,18 @@ food_features <- food_features %>%
 
 food_features <- food_features %>%
   group_by(commodity, pricetype) %>%
-  arrange(date) %>%
+  arrange(date, .by_group = TRUE) %>%
   summarise(
-    total_price = sum(price_in_ksh, na.rm=TRUE),
-    total_price = sum(usdprice, na.rm=TRUE),
-    average_price = mean(price_in_ksh, na.rm=TRUE),
-    average_price = mean(usdprice, na.rm=TRUE),
-    max_price = max(price_in_ksh, na.rm=TRUE),
-    max_price = max(usdprice, na.rm=TRUE),
-    min_price = min(price_in_ksh, na.rm=TRUE),
-    min_price = min(usdprice, na.rm=TRUE),
+    total_price_KSH = sum(price_in_ksh, na.rm=TRUE),
+    total_price_USD = sum(usdprice, na.rm=TRUE),
+    average_price_KSH = mean(price_in_ksh, na.rm=TRUE),
+    average_price_USD = mean(usdprice, na.rm=TRUE),
+    max_price_KSH = max(price_in_ksh, na.rm=TRUE),
+    max_price_USD = max(usdprice, na.rm=TRUE),
+    min_price_KSH = min(price_in_ksh, na.rm=TRUE),
+    min_price_USD = min(usdprice, na.rm=TRUE),
+    observations = sum(is.na(price_in_ksh)),
+    .groups = "drop"
   ) %>%
   ungroup()
 
