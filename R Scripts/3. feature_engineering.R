@@ -37,7 +37,7 @@ yoy <- readRDS(
 cpi_features <- cpi %>%
   mutate(
     year = Year,
-    decade = floor(Year /10) * 10,
+    decade = floor(year /10) * 10,
     
     inflation_period = 
       case_when(
@@ -60,16 +60,16 @@ cpi_features <- cpi_features %>%
 # To get the annual Wage Growth
 
 sector_wages_features <- avg_sector_wages %>%
-  group_by(Sector, Activity) %>%
-  arrange(Year) %>%
+  group_by(sector, activity) %>%
+  arrange(year) %>%
   mutate(
-    wage_growth = ((Earnings / lag(Earnings)) -1) * 100
+    wage_growth = ((earnings / lag(earnings)) -1) * 100
   ) %>%
   ungroup()
 
 sector_wages_features <- sector_wages_features %>%
   mutate(
-    log_sector_earnings = log(Earnings)
+    log_sector_earnings = log(earnings)
   )
 #===============================================================================
 # WAGES PER EMPLOYEE FEATURES
@@ -77,16 +77,16 @@ sector_wages_features <- sector_wages_features %>%
 # To get the annual wage growth per employee
 
 employee_wages_features <- avg_wage_per_employee %>%
-  group_by(Sector, Activity) %>%
-  arrange(Year) %>%
+  group_by(sector, activity) %>%
+  arrange(year) %>%
   mutate(
-    wage_growth = ((Earnings / lag(Earnings)) -1) * 100
+    wage_growth = ((earnings / lag(earnings)) -1) * 100
   ) %>%
   ungroup()
 
 employee_wages_features <- employee_wages_features %>%
   mutate(
-    log_emp_earnings = log(Earnings)
+    log_emp_earnings = log(earnings)
   )
 #===============================================================================
 # FOOD PRICES FEATURES
@@ -112,13 +112,9 @@ food_features <- food_features %>%
   arrange(date, .by_group = TRUE) %>%
   summarise(
     total_price_KSH = sum(price_in_ksh, na.rm=TRUE),
-    total_price_USD = sum(usdprice, na.rm=TRUE),
     average_price_KSH = mean(price_in_ksh, na.rm=TRUE),
-    average_price_USD = mean(usdprice, na.rm=TRUE),
     max_price_KSH = max(price_in_ksh, na.rm=TRUE),
-    max_price_USD = max(usdprice, na.rm=TRUE),
     min_price_KSH = min(price_in_ksh, na.rm=TRUE),
-    min_price_USD = min(usdprice, na.rm=TRUE),
     observations = sum(is.na(price_in_ksh)),
     .groups = "drop"
   ) %>%
