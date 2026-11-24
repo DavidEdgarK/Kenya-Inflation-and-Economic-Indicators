@@ -8,18 +8,22 @@
 library(tidyverse)
 library(here)
 library(zoo)
+library(janitor)
 
 # Read the CSV
 avg_wage_per_employee <- read.csv(
   here("data","raw", "Average Wage Earnings per Employee_CLEAN.csv")
   ) %>%
   
+  # standardize column names
+  clean_names() %>%
+  
   # Remove duplicates
   distinct() %>%
   
   # Clean up the names in the Activity Column
   mutate(
-    Activity = Activity %>%
+    activity = activity %>%
       str_replace_all("^'+|'+$", "") %>% # remove leading/trailing apostrophes
       str_replace_all('"', "") %>% # Eliminate stray quotes
       str_replace_all("[–—]", "-") %>%
@@ -30,18 +34,18 @@ avg_wage_per_employee <- read.csv(
   ) %>%
   
   # Find & Remove Sectors/Activities with ALL earnings missing
-  group_by(Sector, Activity) %>%
-  filter(!all(is.na(Earnings))) %>%
+  group_by(sector, activity) %>%
+  filter(!all(is.na(earnings))) %>%
   ungroup() %>%
   
   # Sort before interpolating the Earnings Column
-  arrange(Sector, Activity, Year) %>%
+  arrange(sector, activity, year) %>%
   
   # Fill the occasional missing values
-  group_by(Sector, Activity) %>%
+  group_by(sector, activity) %>%
   mutate(
-    Earnings = na.approx(
-      Earnings, na.rm =FALSE, rule=2
+    earnings = na.approx(
+      earnings, na.rm =FALSE, rule=2
     )
   ) %>%
   ungroup()
@@ -70,12 +74,15 @@ avg_sector_wages <- read_excel(
   here("data","raw", "Wage Payments by Industry and Sector_CLEAN.xlsx")
   ) %>%
   
+  # standardize column names
+  clean_names() %>%
+
   # Remove Duplicates
   distinct() %>%
   
   # Clean Up and unify the Activity Column
   mutate(
-    Activity = Activity %>%
+    activity = activity %>%
       str_replace_all("^'+|'+$", "") %>% # remove leading/trailing apostrophes
       str_replace_all('"', "") %>% # Eliminate stray and embedded quotes
       str_replace_all("[–—]", "-") %>%
@@ -84,18 +91,18 @@ avg_sector_wages <- read_excel(
     ) %>%
   
   #Find and remove the Sector & Activities where Earnings is missing
-  group_by(Sector, Activity) %>%
-  filter(!all(is.na(Earnings))) %>%
+  group_by(sector, activity) %>%
+  filter(!all(is.na(earnings))) %>%
   ungroup() %>%
   
   # Sort prior to interpolation of earnings
-  arrange(Sector, Activity, Year) %>%
+  arrange(sector, activity, year) %>%
   
   # Fill up missing Earnings 
-  group_by(Sector, Activity) %>%
+  group_by(sector, activity) %>%
   mutate(
-    Earnings = na.approx(
-      Earnings, na.rm=FALSE, rule=2
+    earnings = na.approx(
+      earnings, na.rm=FALSE, rule=2
     )
   ) %>%
   ungroup()
@@ -136,9 +143,12 @@ cpi_clean <- read_excel(
   # Drop unwanted columns
   select(-YearMonth, -Month_num, -Date) %>%
   
+  # standardize column names
+  clean_names() %>%
+  
   # Clean and Normalize the Division column
   mutate(
-    Division = Division %>%
+    division = division %>%
       as.character() %>%
       str_replace_all("^'+|'+$", "") %>% # remove leading/trailing apostrophes
       str_replace_all('"', "") %>% # Eliminate stray and embedded double quotes
@@ -150,29 +160,29 @@ cpi_clean <- read_excel(
   # Remove corrupted rows
   filter(
     !(
-      is.na(Year) &
-      is.na(Month) &
-      is.na(CPI_INDEX)
+      is.na(year) &
+      is.na(month) &
+      is.na(cpi_index)
     )
   ) %>%
   
   # Find and remove from Division with no usable CPI values
-  group_by(Division) %>%
+  group_by(division) %>%
   filter(
-    !all(is.na(CPI_INDEX))
+    !all(is.na(cpi_index))
   ) %>%
   ungroup() %>%
   
   # Sort
   arrange(
-    Division, Year
+    division, year
   ) %>%
   
   # Fill up occasional missing CPI values
-  group_by(Division) %>%
+  group_by(division) %>%
   mutate(
-    CPI_INDEX = na.approx(
-      CPI_INDEX, na.rm=FALSE, rule=2
+    cpi_index = na.approx(
+      cpi_index, na.rm=FALSE, rule=2
     )
   ) %>%
   ungroup() %>%
@@ -205,12 +215,12 @@ food_prices_clean <-read_excel(
   here("data","raw", "wfp_food_prices_ken_2006_2026.xlsx")
   ) %>%
   
-  # Standardize Column names
-  clean_names() %>%
-  
   # Drop Columns
   select(-admin1, -latitude, -longitude, -commodity_id, -priceflag) %>%
   
+  # standardize column names
+  clean_names() %>%
+
   #Drop completely the duplicated rows
   distinct() %>%
   
@@ -290,15 +300,14 @@ yoy_clean <- read.csv(
   here("data","raw","Year on Year Inflation by division_CLEAN.csv")
   ) %>%
   
-  # Standardize column names
+  # standardize column names
   clean_names() %>%
-  
+
   # Remove duplicates
   distinct() %>%
   
   # Standardize the text character in each column
   mutate(
-    
     date = as.Date(
       date, format = "%m/%d/%Y"
     ),
@@ -346,5 +355,3 @@ yoy_clean <- read.csv(
       "data", "processed", "yoy_clean.rds"
     )
   )
-
-
