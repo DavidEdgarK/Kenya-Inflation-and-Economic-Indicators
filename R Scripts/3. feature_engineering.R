@@ -115,7 +115,7 @@ food_features <- food_features %>%
     average_price_KSH = mean(price_in_ksh, na.rm=TRUE),
     max_price_KSH = max(price_in_ksh, na.rm=TRUE),
     min_price_KSH = min(price_in_ksh, na.rm=TRUE),
-    observations = sum(is.na(price_in_ksh)),
+    observations = n(),
     .groups = "drop"
   ) %>%
   ungroup()
@@ -180,6 +180,11 @@ saveRDS(
 saveRDS(
   food_features,
   here("data", "processed","food_features.rds")
+)
+
+write.csv(
+  food_features,
+  here("data", "processed", "food_features.csv")
 )
 
 saveRDS(
