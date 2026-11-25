@@ -118,6 +118,10 @@ master_data <- master_data %>%
     employee_wage_growth = (
       earnings_employee / lag(earnings_employee) -1
     ) * 100,
+    
+    # Ensure the "year" characters are read as numeric
+    year = (as.integer(year))
+    
   ) %>%
   ungroup()
 
